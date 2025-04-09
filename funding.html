@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Monitoring - Funding Page</title>
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/5.12.0/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/5.12.0/antd.min.css">
+    
+    <!-- Scripts - dans le bon ordre pour éviter les erreurs de dépendance -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.7/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/5.12.0/antd.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #8C39FF;
+            --secondary-color: #FF6B3D;
+            --border-radius: 8px;
+            --background-color: #F5F7FA;
+            --hover-color: #F5F3FF;
+            --border-color: #f0f0f0;
+            --text-secondary: #666;
+            --primary-hover: #7B2BFF;
+            --success-color: #52c41a;
+            --error-color: #ff4d4f;
+            --info-color: #1890ff;
+            --accent-color: #722ed1;
+            --warning-color: #faad14;
+        }
+        
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background-color);
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 32px;
+            border-radius: var(--border-radius);
+            margin-bottom: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            margin: 16px 0 0;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .pm-message {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 32px;
+            margin-bottom: 32px;
+            border-left: 5px solid var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .pm-message blockquote {
+            margin: 0;
+            padding: 0;
+            font-style: italic;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .pm-message .signature {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .pm-message .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e6e6e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .epic-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+        
+        .epic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .epic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .epic-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .epic-title h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+        
+        .epic-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--hover-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .epic-rank {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .epic-description {
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .epic-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .epic-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .epic-votes {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .vote-amount {
+            background: var(--hover-color);
+            border-radius: var(--border-radius);
+            padding: 8px 16px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .epic-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .epic-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .funding-progress {
+            margin-top: 32px;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .funding-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .funding-stat {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .funding-stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .funding-stat-label {
+            color: var(--text-secondary);
+        }
+        
+        .funding-cta {
+            text-align: center;
+            margin-top: 32px;
+            padding: 32px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .draggable-indicator {
+            cursor: move;
+            color: #999;
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        .epic-position {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: absolute;
+            top: -12px;
+            left: -12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .home-button {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        
+        .home-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+        // Attendre que le DOM soit complètement chargé
+        document.addEventListener('DOMContentLoaded', function() {
+            const { useState, useEffect } = React;
+            const { 
+                Button, Tag, Progress, Slider, Statistic, 
+                Row, Col, Card, Space, Typography, Modal, 
+                Input, Select, Tooltip, Badge, Divider,
+                notification, Avatar, message
+            } = antd;
+            const { Title, Paragraph, Text } = Typography;
+            
+            // Liste des epics
+            const epicData = [
+                {
+                    id: 1,
+                    title: "Gestion des Formules",
+                    icon: "⚗️",
+                    description: "Création et manipulation de formules chimiques avec interface intuitive pour les scientifiques et chefs de produit.",
+                    minSize: 60,
+                    maxSize: 120,
+                    tags: ["Chimie", "Core", "UX"],
+                    features: [
+                        "Éditeur de formules interactif",
+                        "Comparaison côte à côte",
+                        "Visualisation de performance",
+                        "Validation automatique"
+                    ],
+                    roi: 9.4,
+                    complexity: "Élevée",
+                    priority: 2,
+                    votes: 0
+                },
+                {
+                    id: 2,
+                    title: "Système d'Expertise",
+                    icon: "🔬",
+                    description: "Gestion complète des évaluations d'expertise (Safety, Microbio, Performance) avec workflows automatisés.",
+                    minSize: 80,
+                    maxSize: 150,
+                    tags: ["Qualité", "Compliance", "Workflow"],
+                    features: [
+                        "Dashboards d'expertise par domaine",
+                        "Automatisation des demandes",
+                        "Notifications intelligentes",
+                        "Archives et historique complet"
+                    ],
+                    roi: 8.7,
+                    complexity: "Élevée",
+                    priority: 3,
+                    votes: 0
+                },
+                {
+                    id: 3,
+                    title: "Intégration IA",
+                    icon: "🤖",
+                    description: "Assistants IA pour l'analyse des risques, génération de rapports et prédiction de performance des formules.",
+                    minSize: 40,
+                    maxSize: 100,
+                    tags: ["Innovation", "Data Science", "Automatisation"],
+                    features: [
+                        "Analyse prédictive des formules",
+                        "Génération de rapports automatisés",
+                        "Aide à la décision",
+                        "Détection d'anomalies"
+                    ],
+                    roi: 11.2,
+                    complexity: "Très élevée",
+                    priority: 1,
+                    votes: 0
+                },
+                {
+                    id: 4,
+                    title: "Gestion des Références",
+                    icon: "📋",
+                    description: "Système complet de gestion des références produits avec support pour spécifications particulières (CSAR, HALAL, etc.).",
+                    minSize: 30,
+                    maxSize: 60,
+                    tags: ["Produits", "Compliance", "Data"],
+                    features: [
+                        "Filtrage multi-critères",
+                        "Import/export de données",
+                        "Gestion des attributs spécifiques",
+                        "Diversification automatisée"
+                    ],
+                    roi: 7.5,
+                    complexity: "Moyenne",
+                    priority: 5,
+                    votes: 0
+                },
+                {
+                    id: 5,
+                    title: "Tableau de bord et Reporting",
+                    icon: "📊",
+                    description: "Interface de visualisation avancée pour suivre les KPIs, tendances et statuts des projets en temps réel.",
+                    minSize: 50,
+                    maxSize: 90,
+                    tags: ["Analytics", "Visualisation", "Décision"],
+                    features: [
+                        "KPIs personnalisables",
+                        "Rapports automatisés",
+                        "Export multi-formats",
+                        "Tableaux de bord spécifiques aux rôles"
+                    ],
+                    roi: 9.8,
+                    complexity: "Moyenne",
+                    priority: 4,
+                    votes: 0
+                },
+                {
+                    id: 6,
+                    title: "Module de Checklist",
+                    icon: "✅",
+                    description: "Système de gestion des tâches et milestones avec suivi de progression et alertes automatiques.",
+                    minSize: 20,
+                    maxSize: 50,
+                    tags: ["Productivité", "Gestion de projet", "UX"],
+                    features: [
+                        "Templates de checklist personnalisables",
+                        "Notifications et rappels",
+                        "Vue Kanban et calendrier",
+                        "Intégration avec les systèmes existants"
+                    ],
+                    roi: 8.2,
+                    complexity: "Faible",
+                    priority: 7,
+                    votes: 0
+                },
+                {
+                    id: 7,
+                    title: "Sécurisation & Green",
+                    icon: "🌱",
+                    description: "Module dédié aux aspects écologiques et sécurité des produits avec certifications et conformité.",
+                    minSize: 40,
+                    maxSize: 80,
+                    tags: ["Écologie", "Compliance", "Sécurité"],
+                    features: [
+                        "Évaluation d'impact environnemental",
+                        "Traçabilité complète",
+                        "Validation des certifications",
+                        "Rapports de conformité"
+                    ],
+                    roi: 7.9,
+                    complexity: "Moyenne",
+                    priority: 6,
+                    votes: 0
+                },
+                {
+                    id: 8,
+                    title: "Gestion des Templates",
+                    icon: "📝",
+                    description: "Création et utilisation de templates pour diverses opérations, accélérant les processus répétitifs.",
+                    minSize: 15,
+                    maxSize: 45,
+                    tags: ["Productivité", "Standardisation", "UX"],
+                    features: [
+                        "Bibliothèque de templates",
+                        "Éditeur visuel",
+                        "Contrôle de version",
+                        "Partage et collaboration"
+                    ],
+                    roi: 6.8,
+                    complexity: "Faible",
+                    priority: 8,
+                    votes: 0
+                }
+            ];
+            
+            function App() {
+                // Définition des états
+                const [epics, setEpics] = React.useState(epicData.sort((a, b) => a.priority - b.priority));
+                const [totalVotes, setTotalVotes] = React.useState(0);
+                const [allocationComplete, setAllocationComplete] = React.useState(false);
+                const [votingEnabled, setVotingEnabled] = React.useState(true);
+                const [showHelp, setShowHelp] = React.useState(false);
+                
+                // Fonction pour voter pour un epic
+                const voteForEpic = (id, amount) => {
+                    if (!votingEnabled) return;
+                    
+                    setEpics(currentEpics => {
+                        // Vérifier si on a assez de votes disponibles
+                        const epic = currentEpics.find(e => e.id === id);
+                        const currentTotal = currentEpics.reduce((sum, e) => sum + e.votes, 0);
+                        
+                        if (currentTotal + amount > 100) {
+                            message.warning("Vous avez dépassé votre budget de votes (max 100)!");
+                            return currentEpics;
+                        }
+                        
+                        const updatedEpics = currentEpics.map(epic => {
+                            if (epic.id === id) {
+                                return { ...epic, votes: Math.max(0, epic.votes + amount) };
+                            }
+                            return epic;
+                        });
+                        
+                        // Trier à nouveau par votes puis par priorité
+                        return updatedEpics.sort((a, b) => {
+                            if (b.votes !== a.votes) return b.votes - a.votes;
+                            return a.priority - b.priority;
+                        });
+                    });
+                };
+                
+                // Mettre à jour le total des votes
+                React.useEffect(() => {
+                    const newTotal = epics.reduce((sum, epic) => sum + epic.votes, 0);
+                    setTotalVotes(newTotal);
+                    setAllocationComplete(newTotal === 100);
+                }, [epics]);
+                
+                // Fonction pour déplacer un epic dans la liste
+                const moveEpic = (dragIndex, hoverIndex) => {
+                    const updatedEpics = [...epics];
+                    const draggedEpic = updatedEpics[dragIndex];
+                    
+                    updatedEpics.splice(dragIndex, 1);
+                    updatedEpics.splice(hoverIndex, 0, draggedEpic);
+                    
+                    // Mettre à jour les priorités
+                    const newEpics = updatedEpics.map((epic, index) => ({
+                        ...epic,
+                        priority: index + 1
+                    }));
+                    
+                    setEpics(newEpics);
+                };
+                
+                // Fonction pour soumettre les votes
+                const submitVotes = () => {
+                    if (totalVotes !== 100) {
+                        message.error("Vous devez attribuer exactement 100 votes!");
+                        return;
+                    }
+                    
+                    notification.success({
+                        message: 'Votes soumis avec succès',
+                        description: 'Merci pour votre participation! Vos votes ont été enregistrés.',
+                        placement: 'topRight',
+                        duration: 5
+                    });
+                    
+                    setVotingEnabled(false);
+                };
+                
+                // Fonction pour réinitialiser les votes
+                const resetVotes = () => {
+                    setEpics(epics.map(epic => ({ ...epic, votes: 0 }))
+                        .sort((a, b) => a.priority - b.priority));
+                    setVotingEnabled(true);
+                };
+                
+                // Composant Epic Card
+                const EpicCard = ({ epic, index }) => {
+                    return React.createElement('div', { className: "epic-card", key: epic.id },
+                        React.createElement('div', { className: "epic-position" }, index + 1),
+                        React.createElement('div', { className: "epic-header" },
+                            React.createElement('div', { className: "epic-title" },
+                                React.createElement('div', { className: "epic-icon" }, epic.icon),
+                                React.createElement('div', null,
+                                    React.createElement('h3', null, epic.title),
+                                    React.createElement('div', { className: "epic-meta" },
+                                        React.createElement('span', { className: "epic-meta-item" },
+                                            React.createElement('span', null, "💰 ROI:"),
+                                            React.createElement('span', { 
+                                                style: { color: "#1890ff", fontWeight: "bold" } 
+                                            }, epic.roi + "x")
+                                        ),
+                                        React.createElement('span', { className: "epic-meta-item" },
+                                            React.createElement('span', null, "⏱️ Taille:"),
+                                            React.createElement('span', null, epic.minSize + "-" + epic.maxSize + " jours")
+                                        ),
+                                        React.createElement('span', { className: "epic-meta-item" },
+                                            React.createElement('span', null, "🔄 Complexité:"),
+                                            React.createElement('span', null, epic.complexity)
+                                        )
+                                    )
+                                )
+                            ),
+                            React.createElement('div', { className: "epic-votes" },
+                                React.createElement(Button, {
+                                    shape: "circle",
+                                    disabled: epic.votes < 5 || !votingEnabled,
+                                    onClick: () => voteForEpic(epic.id, -5)
+                                }, "➖"),
+                                React.createElement('span', { className: "vote-amount" }, epic.votes),
+                                React.createElement(Button, {
+                                    shape: "circle",
+                                    disabled: totalVotes >= 100 || !votingEnabled,
+                                    onClick: () => voteForEpic(epic.id, 5)
+                                }, "➕")
+                            )
+                        ),
+                        React.createElement('div', { className: "epic-description" }, epic.description),
+                        React.createElement('div', { className: "epic-tags" },
+                            epic.tags.map((tag, i) =>
+                                React.createElement(Tag, {
+                                    key: i,
+                                    color: i === 0 ? "purple" : i === 1 ? "blue" : i === 2 ? "green" : "orange"
+                                }, tag)
+                            )
+                        ),
+                        React.createElement('div', { className: "epic-actions" },
+                            React.createElement('div', null,
+                                React.createElement(Button, null, "Voir détails")
+                            ),
+                            React.createElement('div', null,
+                                React.createElement(Progress, {
+                                    percent: epic.votes,
+                                    strokeColor: {
+                                        '0%': '#8C39FF',
+                                        '100%': '#FF6B3D',
+                                    },
+                                    format: percent => `${percent}%`,
+                                    status: epic.votes > 0 ? "active" : "normal"
+                                })
+                            )
+                        )
+                    );
+                };
+                
+                return React.createElement('div', { className: "container" },
+                    React.createElement('div', { className: "header" },
+                        React.createElement('h1', null, "Product Page Monitoring - Funding"),
+                        React.createElement('p', null, "Priorisez les fonctionnalités pour maximiser l'impact du projet"),
+                        React.createElement('a', { 
+                            href: "index.html", 
+                            className: "home-button" 
+                        }, "🏠 Retour au projet")
+                    ),
+                    React.createElement('div', { className: "pm-message" },
+                        React.createElement('blockquote', null,
+                            "Bonjour, vous allez réaliser demain un design sprint sur la product page monitoring. C'est une démarche extraordinaire et à grande valeur ajoutée. Une preuve de plus que l'intelligence collective est bien supérieure à nos simples réflexions individuelles. La démarche ne vise pas à définir la perfection idéale mais bien une demarche incrémentale qui va nous amener à definir un mvp des v0, v1 et vn.",
+                            React.createElement('br'),
+                            React.createElement('br'),
+                            "Je suis impatient de voir les délivrables de votre journée.",
+                            React.createElement('br'),
+                            React.createElement('br'),
+                            "Enjoy."
+                        ),
+                        React.createElement('div', { className: "signature" },
+                            React.createElement('div', { className: "avatar" }, "JMS"),
+                            React.createElement('div', null,
+                                React.createElement('strong', null, "Jean-Michel Sturla"),
+                                React.createElement('br'),
+                                React.createElement('small', null, "Product Manager")
+                            )
+                        )
+                    ),
+                    React.createElement('div', { className: "funding-summary" },
+                        React.createElement('div', { className: "funding-stat" },
+                            React.createElement('div', { className: "funding-stat-value" }, totalVotes + "/100"),
+                            React.createElement('div', { className: "funding-stat-label" }, "Votes alloués"),
+                            React.createElement(Progress, {
+                                percent: totalVotes,
+                                status: totalVotes === 100 ? "success" : "active",
+                                strokeColor: {
+                                    '0%': '#8C39FF',
+                                    '100%': '#FF6B3D'
+                                }
+                            })
+                        ),
+                        React.createElement('div', { className: "funding-stat" },
+                            React.createElement('div', { className: "funding-stat-value" }, "8"),
+                            React.createElement('div', { className: "funding-stat-label" }, "Epics à financer")
+                        ),
+                        React.createElement('div', { className: "funding-stat" },
+                            React.createElement('div', { className: "funding-stat-value" }, "285-695"),
+                            React.createElement('div', { className: "funding-stat-label" }, "Jours de développement")
+                        )
+                    ),
+                    React.createElement('div', { 
+                        style: { 
+                            marginBottom: "20px", 
+                            display: "flex", 
+                            justifyContent: "space-between", 
+                            alignItems: "center" 
+                        } 
+                    },
+                        React.createElement(Title, { level: 3 }, "Epics à prioriser"),
+                        React.createElement(Space, null,
+                            React.createElement(Button, { onClick: () => setShowHelp(true) },
+                                "❓ Comment ça marche"
+                            ),
+                            React.createElement(Button, { onClick: resetVotes },
+                                "🔄 Réinitialiser"
+                            ),
+                            React.createElement(Button, {
+                                type: "primary",
+                                disabled: totalVotes !== 100 || !votingEnabled,
+                                onClick: submitVotes
+                            }, "✅ Soumettre (" + totalVotes + "/100)")
+                        )
+                    ),
+                    epics.map((epic, index) => 
+                        React.createElement(EpicCard, { 
+                            key: epic.id, 
+                            epic: epic, 
+                            index: index 
+                        })
+                    ),
+                    React.createElement('div', { className: "funding-cta" },
+                        React.createElement(Title, { level: 3 }, "Prêt à investir dans l'innovation ?"),
+                        React.createElement(Paragraph, null,
+                            "Notre équipe est prête à transformer ces idées en réalité. Avec votre financement, " +
+                            "nous pouvons développer un produit qui révolutionnera la gestion des formules et produits."
+                        ),
+                        React.createElement(Button, { type: "primary", size: "large" }, "Contacter l'équipe")
+                    ),
+                    React.createElement(Modal, {
+                        title: "Comment prioriser les epics",
+                        open: showHelp,
+                        onOk: () => setShowHelp(false),
+                        onCancel: () => setShowHelp(false),
+                        width: 600
+                    },
+                        React.createElement('div', { style: { padding: "20px 0" } },
+                            React.createElement(Title, { level: 4 }, "Instructions"),
+                            React.createElement('ol', { style: { padding: "0 0 0 20px" } },
+                                React.createElement('li', null, 
+                                    "Vous disposez de ",
+                                    React.createElement('strong', null, "100 points d'investissement"),
+                                    " à allouer aux différents epics."
+                                ),
+                                React.createElement('li', null, 
+                                    "Utilisez les boutons ",
+                                    React.createElement('strong', null, "+"),
+                                    " et ",
+                                    React.createElement('strong', null, "-"),
+                                    " pour ajouter ou retirer 5 points à chaque epic."
+                                ),
+                                React.createElement('li', null, "Les epics sont automatiquement triés par nombre de points alloués."),
+                                React.createElement('li', null, "Vous devez utiliser exactement 100 points pour pouvoir soumettre vos choix."),
+                                React.createElement('li', null, 
+                                    "Une fois que vous êtes satisfait de votre allocation, cliquez sur ",
+                                    React.createElement('strong', null, "Soumettre"),
+                                    "."
+                                )
+                            ),
+                            React.createElement(Divider),
+                            React.createElement(Title, { level: 4 }, "Critères de décision"),
+                            React.createElement('ul', { style: { padding: "0 0 0 20px" } },
+                                React.createElement('li', null, 
+                                    React.createElement('strong', null, "ROI"),
+                                    " - Retour sur investissement estimé"
+                                ),
+                                React.createElement('li', null, 
+                                    React.createElement('strong', null, "Taille"),
+                                    " - Effort de développement en jours (min-max)"
+                                ),
+                                React.createElement('li', null, 
+                                    React.createElement('strong', null, "Complexité"),
+                                    " - Niveau de difficulté technique"
+                                ),
+                                React.createElement('li', null, 
+                                    React.createElement('strong', null, "Tags"),
+                                    " - Domaines et technologies concernés"
+                                )
+                            )
+                        )
+                    )
+                );
+            }
+            
+            // Rendu de l'application
+            const rootElement = document.getElementById('app');
+            const root = ReactDOM.createRoot(rootElement);
+            root.render(React.createElement(App));
+        });
+    </script>
+</body>
+</html> 
