@@ -708,7 +708,35 @@
                             "Notre équipe est prête à transformer ces idées en réalité. Avec votre financement, " +
                             "nous pouvons développer un produit qui révolutionnera la gestion des formules et produits."
                         ),
-                        React.createElement(Button, { type: "primary", size: "large" }, "Contacter l'équipe")
+                        React.createElement('div', { 
+                            style: { 
+                                display: 'flex', 
+                                justifyContent: 'center', 
+                                gap: '16px' 
+                            }
+                        },
+                            React.createElement(Button, { 
+                                type: "primary", 
+                                size: "large",
+                                onClick: () => window.location.href = "mailto:contact@example.com?subject=Financement%20du%20projet"
+                            }, "Contacter l'équipe"),
+                            
+                            React.createElement(Button, { 
+                                type: "default", 
+                                size: "large",
+                                style: {
+                                    borderColor: '#1890ff',
+                                    color: '#1890ff',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px'
+                                },
+                                onClick: () => window.location.href = "https://github.com/gwendalloreal/Backbone/issues/new?title=Plan%20de%20financement&template=funding-proposal.md&labels=funding"
+                            }, [
+                                React.createElement('span', { key: 'icon' }, "📝"),
+                                React.createElement('span', { key: 'text' }, "Soumettre un plan de financement sur GitHub")
+                            ])
+                        )
                     ),
                     React.createElement(Modal, {
                         title: "Comment prioriser les epics",
